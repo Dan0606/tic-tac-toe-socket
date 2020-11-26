@@ -17,6 +17,24 @@ def convert_board_to_string():
             msg += str(BOARD[i][j])
     return msg
 
+def is_game_over(): # return True if game is over and False if not
+    empty_places_counter = 0
+    for i in BOARD:
+        in_row = 0
+        first_sign = ""
+        for j in i:
+            if first_sign == "" and j != 0:
+                first_sign = j
+            if first_sign == j:
+                in_row += 1
+            if in_row == 3:
+                return True            
+            if j == 0:
+                empty_places_counter += 1
+            
+    if empty_places_counter == 0:
+        return True
+
 def get_row_col():
     global PLAYER_PLAYING
     for client in CLIENTS:
@@ -46,7 +64,10 @@ def update_board(row, col):
 def game_loop_server():
     game_play = True
     while game_play:
-        send_all("PLAY")
+        if is_game_over():
+            send_all("GAME OVER")
+        else:   
+            send_all("PLAY")
         for client in CLIENTS:
             client.recv(1024).decode()          
         row_col = get_row_col()
@@ -56,8 +77,8 @@ def game_loop_server():
         str_board = convert_board_to_string()
         send_all(str_board)
         for client in CLIENTS:
-            client.recv(1024).decode() 
-    send_all("DONT PLAY")
+            client.recv(1024).decode()
+
 
 
    

@@ -48,7 +48,8 @@ def game_loop_client():
             board = S.recv(1024).decode()
             S.send("BOARD ARRIVED".encode())
             print(print_board(board))
-        elif game_play == "DONT PLAY":
+        elif game_play == "GAME OVER":
+            print("game over")
             break
 
 
