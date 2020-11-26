@@ -45,6 +45,9 @@ def game_loop_client():
         if game_play == "PLAY":
             S.send("PLAYING".encode())
             send_row_col()
+            board = S.recv(1024).decode()
+            S.send("BOARD ARRIVED".encode())
+            print(print_board(board))
         elif game_play == "DONT PLAY":
             break
 

@@ -26,17 +26,15 @@ def get_row_col():
             client.send("WAIT".encode())
     row = CLIENTS[PLAYER_PLAYING].recv(1024).decode()
     col = CLIENTS[PLAYER_PLAYING].recv(1024).decode()
-    print(row, col)
     if PLAYER_PLAYING == 0:
         PLAYER_PLAYING = 1
     elif PLAYER_PLAYING == 1:
         PLAYER_PLAYING = 0
+    return row,col
     
     
 
-def update_board(row_col):
-    row = row_col[0]
-    col = row_col[1]
+def update_board(row, col):
     if PLAYER_PLAYING == 0:
         sign = 1
     else:
@@ -51,7 +49,14 @@ def game_loop_server():
         send_all("PLAY")
         for client in CLIENTS:
             client.recv(1024).decode()          
-        get_row_col()
+        row_col = get_row_col()
+        row = int(row_col[0])
+        col = int(row_col[1])
+        update_board(row, col)
+        str_board = convert_board_to_string()
+        send_all(str_board)
+        for client in CLIENTS:
+            client.recv(1024).decode() 
     send_all("DONT PLAY")
 
 
